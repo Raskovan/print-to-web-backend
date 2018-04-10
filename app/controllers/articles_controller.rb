@@ -32,10 +32,11 @@ class ArticlesController < ApplicationController
     body = parsedArticle.xpath('//body').text
     quote = parsedArticle.xpath('//quote').text
     img = parsedArticle.xpath('//img').attribute('href').value
-    trimmed_url = img[7..-1]
+    # byebug
+    # trimmed_url = img[7..-1]
     @article = Article.new(user_id: user_id, title: title, subtitle: subtitle, author: author, body: body, quote: quote)
     if @article.save
-      filelink = client.upload(filepath: trimmed_url)
+      filelink = client.upload(filepath: img)
       link = filelink.transform.url
       @image = Image.create(article_id: @article.id, url: link)
       render json: @article
