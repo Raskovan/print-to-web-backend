@@ -10,5 +10,7 @@ Rails.application.routes.draw do
   get 'get_user', to: "auth#show"
   post '/findUser', to: "users#findUser"
   get '/users', to: "users#index"
+  post '/images', to: "images#create"
+  delete "/images/:id", to: "images#destroy"
 
 end

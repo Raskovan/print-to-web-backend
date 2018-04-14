@@ -21,7 +21,6 @@ class ArticlesController < ApplicationController
   end
 
   def upload
-    client = FilestackClient.new(ENV["filestack_api_key"])
     uploaded = params[:file]
     user_id = params[:user_id]
     document = uploaded.tempfile
@@ -34,11 +33,11 @@ class ArticlesController < ApplicationController
     img = parsedArticle.xpath('//img').attribute('href').value
     # byebug
     trimmed_url = img[7..-1]
-    @article = Article.new(user_id: user_id, title: title, subtitle: subtitle, author: author, body: body, quote: quote)
+    @article = Article.new(user_id: user_id, title: title, subtitle: subtitle, author: author, body: body, quote: quote, img_name: img)
     if @article.save
-      filelink = client.upload(filepath: trimmed_url)
-      link = filelink.transform.url
-      @image = Image.create(article_id: @article.id, url: link)
+      # filelink = client.upload(filepath: trimmed_url)
+      # link = filelink.transform.url
+      # @image = Image.create(article_id: @article.id, url: link)
       render json: @article
     else
       render json: {message: "Couldn't save the article"}
@@ -52,10 +51,12 @@ class ArticlesController < ApplicationController
   end
 
   def destroy
+    client = FilestackClient.new(ENV["filestack_api_key"])
     @article = Article.find_by(id: params[:id])
     @article.destroy
-    @images = Image.find_by(article_id: params[:id])
-    @images.destroy
+    @image = Image.find_by(article_id: params[:id])
+    # client.delete(@image[:handle])
+    @image.destroy
     render json: @article
   end
 
