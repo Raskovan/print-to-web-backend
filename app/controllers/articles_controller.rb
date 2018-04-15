@@ -16,6 +16,7 @@ class ArticlesController < ApplicationController
   def show
     @articles = Article.where(title: params[:title])
     @user = User.find_by(mag_url: params[:mag_url])
+    # byebug
     @article = @articles.find_by(user_id: @user.id)
     render json: @article, each_serializer: ArticleSerializer
   end
@@ -29,11 +30,13 @@ class ArticlesController < ApplicationController
     subtitle = parsedArticle.xpath('//subtitle').text
     author = parsedArticle.xpath('//author').text
     body = parsedArticle.xpath('//body').text
+    body_fixed = body.gsub! "\u2029", "\n"
     quote = parsedArticle.xpath('//quote').text
     img = parsedArticle.xpath('//img').attribute('href').value
-    # byebug
+    allArticles = User.find_by(id: user_id).articles.order(:position)
+    position = allArticles.last[:position] + 1
     trimmed_url = img[7..-1]
-    @article = Article.new(user_id: user_id, title: title, subtitle: subtitle, author: author, body: body, quote: quote, img_name: img)
+    @article = Article.new(user_id: user_id, title: title, subtitle: subtitle, author: author, body: body_fixed, quote: quote, img_name: img, position: position)
     if @article.save
       # filelink = client.upload(filepath: trimmed_url)
       # link = filelink.transform.url
