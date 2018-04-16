@@ -8,7 +8,7 @@ class UsersController < ApplicationController
 
   def findUser
     @user = User.find_by(mag_url: params[:mag_url])
-    @articles = Article.select{|a| a[:user_id] == @user.id}
+    # @articles = Article.select{|a| a[:user_id] == @user.id}
     if @user
       render json: @user
       # render :json => {:user => @user,
