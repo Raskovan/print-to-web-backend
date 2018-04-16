@@ -33,10 +33,17 @@ class ArticlesController < ApplicationController
     body_fixed = body.gsub! "\u2029", "\n"
     quote = parsedArticle.xpath('//quote').text
     img = parsedArticle.xpath('//img').attribute('href').value
+    # byebug
     allArticles = User.find_by(id: user_id).articles.order(:position)
-    position = allArticles.last[:position] + 1
-    trimmed_url = img[7..-1]
+    if allArticles.any?
+      position = allArticles.last[:position] + 1
+    else
+      position = 1
+    end
+    # trimmed_url = img[7..-1]
     @article = Article.new(user_id: user_id, title: title, subtitle: subtitle, author: author, body: body_fixed, quote: quote, img_name: img, position: position)
+
+
     if @article.save
       # filelink = client.upload(filepath: trimmed_url)
       # link = filelink.transform.url
