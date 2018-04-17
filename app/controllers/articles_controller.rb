@@ -5,12 +5,6 @@ class ArticlesController < ApplicationController
   def index
     @articles =  Article.where(:user_id => cur_user.id)
     render json: @articles, each_serializer: ArticleSerializer
-    #
-    # if logged_in?
-    #    render json: {id: current_user.id, username: current_user.username}
-    #  else
-    #   render json: {alert: "Not Authorized"}
-    #  end
   end
 
   def show
@@ -33,21 +27,14 @@ class ArticlesController < ApplicationController
     body_fixed = body.gsub! "\u2029", "\n"
     quote = parsedArticle.xpath('//quote').text
     img = parsedArticle.xpath('//img').attribute('href').value
-    # byebug
     allArticles = User.find_by(id: user_id).articles.order(:position)
     if allArticles.any?
       position = allArticles.last[:position] + 1
     else
       position = 1
     end
-    # trimmed_url = img[7..-1]
     @article = Article.new(user_id: user_id, title: title, subtitle: subtitle, author: author, body: body_fixed, quote: quote, img_name: img, position: position)
-
-
     if @article.save
-      # filelink = client.upload(filepath: trimmed_url)
-      # link = filelink.transform.url
-      # @image = Image.create(article_id: @article.id, url: link)
       render json: @article
     else
       render json: {message: "Couldn't save the article"}

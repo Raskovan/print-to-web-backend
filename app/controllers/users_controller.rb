@@ -14,7 +14,7 @@ class UsersController < ApplicationController
       # render :json => {:user => @user,
       #   :articles => @articles, images: @user.images}
     else
-      render json: {message: "Cant find"}
+      render json: {message: "Give your magazine a name."}
     end
   end
 
