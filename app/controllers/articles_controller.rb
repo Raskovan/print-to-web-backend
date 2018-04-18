@@ -24,7 +24,7 @@ class ArticlesController < ApplicationController
     subtitle = parsedArticle.xpath('//subtitle').text
     author = parsedArticle.xpath('//author').text
     body = parsedArticle.xpath('//body').text
-    body_fixed = body.gsub! "\u2029", "\n"
+    body_fixed = body.gsub! "\u2029", "<br/>"
     quote = parsedArticle.xpath('//quote').text
     img = parsedArticle.xpath('//img').attribute('href').value
     allArticles = User.find_by(id: user_id).articles.order(:position)
