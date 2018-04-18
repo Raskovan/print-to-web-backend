@@ -8,6 +8,7 @@ class ArticlesController < ApplicationController
   end
 
   def show
+    # byebug
     @articles = Article.where(title: params[:title])
     @user = User.find_by(mag_url: params[:mag_url])
     # byebug
