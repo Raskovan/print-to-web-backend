@@ -8,7 +8,6 @@ class ArticlesController < ApplicationController
   end
 
   def show
-    # byebug
     @articles = Article.where(title: params[:title])
     @user = User.find_by(mag_url: params[:mag_url])
     # byebug
@@ -21,8 +20,10 @@ class ArticlesController < ApplicationController
     user_id = params[:user_id]
     document = uploaded.tempfile
     parsedArticle = Nokogiri::XML(File.open(document))
-    title = parsedArticle.xpath('//title').text
-    subtitle = parsedArticle.xpath('//subtitle').text
+    title = parsedArticle.xpath('//title').text.delete(":,',.").chomp(" ").gsub("\u2029", " ").gsub("  ", " ").downcase.titleize
+    # title  = title_org.gsub!"\u2029", " "
+    subtitle = parsedArticle.xpath('//subtitle').text.chomp(" ").gsub("\u2029", " ").gsub("  ", " ")
+    # subtitle  = subtitle_org.gsub!"\u2029", " "
     author = parsedArticle.xpath('//author').text
     body = parsedArticle.xpath('//body').text
     body_fixed = body.gsub! "\u2029", "<br/>"
